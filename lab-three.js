@@ -13,37 +13,37 @@ function isLeapYear(year) {
 
 // Convert month to a month code for all centuries
 function getMonthCode(month, year) {
-    const inputMonth = month;
+    const inputMonth = month.toUpperCase();
     let code;
     switch (inputMonth) {
-        case 'Apr':
-        case 'Jul':
+        case 'APR':
+        case 'JUL':
             code = 0;
             break;
-        case 'Jan':
-        case 'Oct':
+        case 'JAN':
+        case 'OCT':
             code = 1;
             break;
-        case 'May':
+        case 'MAY':
             code = 2;
             break;
-        case 'Aug':
+        case 'AUG':
             code = 3;
             break;
-        case 'Feb':
-        case 'Mar':
-        case 'Nov':
+        case 'FEB':
+        case 'MAR':
+        case 'NOV':
             code = 4;
             break;
-        case 'Jun':
+        case 'JUN':
             code = 5;
             break;
-        case 'Sep':
-        case 'Dec':
+        case 'SEP':
+        case 'DEC':
             code = 6;
             break;
         default:
-            console.log('Month code error');
+            console.log('Invalid month input');
     }
     if ( (year >= 1600 && year < 1700) || (year >= 2000 && year < 2100) ) {
         code += 6;
@@ -55,13 +55,44 @@ function getMonthCode(month, year) {
     return code;
 }
 
+// Convert from weekday code to weekday name
+function weekdayCodeToName(weekdayCode) {
+    let weekday;
+    switch (weekdayCode) {
+        case 0:
+            weekday = 'Saturday';
+            break;
+        case 1:
+            weekday = 'Sunday';
+            break;
+        case 2:
+            weekday = 'Monday';
+            break;
+        case 3:
+            weekday = 'Tuesday';
+            break;
+        case 4:
+            weekday = 'Wednesday';
+            break;
+        case 5:
+            weekday = 'Thursday';
+            break;
+        case 6:
+            weekday = 'Friday';
+            break;
+        default:
+            console.log('Cannot determine the weekday');
+    }
+    return weekday;
+}
+
 // Determine weekday of input date
 function getDayOfTheWeek(year, month, day) {
     // Identify last 2 digits of input year
-    const yy = year.toString().substr(-2);
+    const yy = year % 100; //OR year.toString().substr(-2);
     // Identify month code with consideration of leap year
     let monthCode = getMonthCode(month, year);
-    if (isLeapYear(year) && (month === 'Jan' || month === 'Feb')) {
+    if (isLeapYear(year) && (month.toUpperCase() === 'JAN' || month.toUpperCase() === 'FEB')) {
         monthCode -= 1;
     }
     // Algorithm to determine what day of the week a given date is
@@ -70,31 +101,19 @@ function getDayOfTheWeek(year, month, day) {
     let weekdayCode3 = Math.floor(weekdayCode2/4);
     let weekdayCode4 = weekdayCode1 + weekdayCode2 + weekdayCode3 + day + monthCode;
     weekdayCode = weekdayCode4 % 7;
-    let weekday;
-    switch (weekdayCode) {
-        case 0:
-            weekday = 'Sat';
-            break;
-        case 1:
-            weekday = 'Sun';
-            break;
-        case 2:
-            weekday = 'Mon';
-            break;
-        case 3:
-            weekday = 'Tue';
-            break;
-        case 4:
-            weekday = 'Wed';
-            break;
-        case 5:
-            weekday = 'Thu';
-            break;
-        case 6:
-            weekday = 'Fri';
-            break;
-        default:
-            console.log('Weekday code error');
-    }
-    return weekday;
+    return weekdayCodeToName(weekdayCode);
 }
+
+//Prints out the date and day of the week for each day in the input year
+function makeCalendar(year) {
+    for (d = new Date(year, 0, 1); d <= new Date(year, 11, 31) ; d.setDate(d.getDate() + 1)) {
+        let month = d.getMonth() + 1;
+        let date = d.getDate();
+        let year = d.getFullYear();
+        let weekdayArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        let weekday = weekdayArray[d.getDay()];
+        console.log(`${month}-${date}-${year} is a ${weekday}.`)
+    }
+}
+
+module.exports = {makeCalendar, getDayOfTheWeek};
